@@ -1,27 +1,16 @@
 
-# 离线翻译详细设计 #  
+# 8113版本项目总结  #  
 
 |  日期  | 版本  | 说明  | 作者  
 |--|--|--|--|
-|  2018/7/3| V1.0 | 离线翻译设计评审|韦章翔
+|  2018/8/14| V1.0 | 项目总结|韦章翔
   
 # 1. 总览 #  
   
 ### 1.1 背景介绍 ###  
-晓译翻译机2代在英、俄离线的基础上，增加了日、韩离线语种。  
-目前仅支持中到英、日、韩方向的互译。目的在于给测试人员更
-深入的理解离线翻译的实现 。
+晓译翻译机2代8113版本发布期间，整个版本质量比较差，交付能力较前版本明显减弱。具体表现：交付延时，bug反复打回，性能问题严重，代码提交松散。
   
-  
-### 1.2 适用范围 ###  
-本文档不设范围  
-  
-### 1.3 定义、首字母缩写词和缩略语 ###  
-- **ESR** 识别引擎  
-- **TRS** 翻译引擎  
-- **TTS** 合成引擎  
-  
-# 2. 详细设计 #
+# 2. 总结 #
 
 # 组件图
 ![组件图](https://github.com/weizxfree/javaDesign/blob/master/doc/offline.png?raw=true)
@@ -104,5 +93,5 @@ App-xOfflineService: start tts
 俄日韩： /data/data/com.iflytek.android.device/files/log_ru.log
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTM4MzQwNzE4MF19
+eyJoaXN0b3J5IjpbNDczNDYzODM3LC0zODM0MDcxODBdfQ==
 -->
