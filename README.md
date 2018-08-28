@@ -11,87 +11,46 @@
 晓译翻译机2代8113版本发布期间，整个版本质量比较差，交付能力较前版本明显减弱。具体表现：交付延时，bug反复打回，性能问题严重，代码提交松散。
   
 # 2. 总结 #
+ - 开发计划制定不合理
+		日韩离线集成和翻译平台接入模块预估20天，主观误判需要倒排，压缩开发周期，未作为关键路径。从而导致翻译平台存在质量不稳定现象。
+		解决方案：排期需要严谨的按照工期进行预估，开发过程中才能有时间对模块重构优化。
+	
+ - 未识别出潜在的开发风险
+由于国际化模块的加入，使得离线翻译模块和翻译平台等原先的稳定模块需要做适配处理，代码改动量大，牵连范围广，且未做设计，引发了很多问题。
+解决方案：考虑新增模块之间的耦合关系，以及新模块和老模块之间的改动量，评估涉及项目变动范围和风险。
 
-# 组件图
-![组件图](https://github.com/weizxfree/javaDesign/blob/master/doc/offline.png?raw=true)
-## 时序图
+ - 性能问题严重
+ 由于版本的快速迭代，项目中存在很多已知的影响到性能问题的设计一直未做重构优化，导致性能问题明显，出现anr和oom等现象。
+ 解决方案：需要新增研发需求，针对性解决anr和oom问题；培训组内成员定位分析性能问题。
 
- 1. 语种切换
+ - 历史遗留问题
+历史版本中存在不合理的设计被继续沿用，而导致新的问题，如初始化时空指针问题。
+ 解决方案：对影响到项目持续性维护的设计进行重构，具体重构范围原则：
+ 1. 对plus带来的收益
+ 2. 已经影响到后续业务开发
 
-```mermaid
-sequenceDiagram
-User->> App: 启动app
-App->> App: start Offline Service 
-Note right of App: service启动时会初始化init esr trs tts
-opt      当前选择语种支持离线
-        App->>App: esr preload
-        App->>App: trs preload
-end
-User->> App: 手动切换语种/场景
-Note right of User: 切换场景指按键和拍照之间相互切换
-opt      待切换语种支持离线且语种变更
-        App->>App: esr preload
-        App->>App: trs preload
-        Note over App: trs load 有15s超时处理
-end
-App->>App: tts 引擎load 
-Note right of App: tts引擎load资源很快，没有preload，只在合成前load
-```
-
- 2. 按键翻译
-```mermaid
-sequenceDiagram
-User->> App: 中/英键按下
-Note over App: 网络未连接
-  alt trs load success
-        App-xOfflineService: start recognize
-    else trs load not success
-         alt trs is loading
-         App->>App: toast 提示
-		 else trs load fail
-		 App->>App: reload、toast 提示
-		 end
-    end
-User->> App: 中/英键按起
-App->> App: 停止识别 stop recognize
-OfflineService--xApp: 识别结果
-Note right of App: 检查trs是否已加载,没有加载的话切换引擎再次加载，流程中断
-App-xOfflineService: start trs
-Note right of App: 设置30s翻译超时
-OfflineService--xApp: 翻译结果
-App->> App: 翻译记录上屏
-Note over App: 临时根据语种加载tts资源
-App-xOfflineService: start tts
-
-```
-3. esr trs load unload 实现
-通过handler维护队列，如果队列中存在未执行的load或start 任务，则直接移除；
-添加最新的任务，保障频繁切换语种情况下，不需要排队等待。
-
-
-## 离线翻译Tag 
+ - 第三方接入的sdk 黑盒子
+在翻译平台sdk接入过程中，由于无任何交接文档，不了解后端业务流程处理，对异常场景下的回调不可知，业务状态控制力不足。
+ 解决方案：需要向接口人获取相应的设计文档，了解后端业务逻辑并同步到测试团队。
  
- - EsrEngine/QRecognizeEngine
- - TransEngine/QTranslateEngine
- - FlyTtsWrapper （中英）/QTtsEngine
- - RusTtsWrapper （俄，日，韩）/QTtsEngine
 
-## 离线翻译资源地址
-**esr** 
-> /sdcard/esr/*
 
-**trs**  
-> /sdcard/itrans_db3300
-> /sdcard/NiuTransTransformer
 
-**tts**
->  /sdcard/tts/*
 
-## 离线翻译log地址
 
->中英： /data/data/com.iflytek.android.device/files/log_cnen.log
-俄日韩： /data/data/com.iflytek.android.device/files/log_ru.log
+
+
+ 
+
+
+
+
+	
+		
+
+
+ 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbNDczNDYzODM3XX0=
+eyJoaXN0b3J5IjpbLTc2NDc0OTQ0OV19
 -->
